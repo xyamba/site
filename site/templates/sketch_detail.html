@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm">
+                <img src="{{ API_BASE_URL }}{{ sketch.image_url }}" class="img-fluid rounded" alt="{{ sketch.title }}">
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <h2>{{ sketch.title }}</h2>
+                <a href="{{ url_for('toggle_fav_route', type_='sketch', id=sketch.id) }}" class="btn btn-outline-danger btn-sm">
+                    {% if sketch.is_favorite %}❤️ Из избранного{% else %}🤍 В избранное{% endif %}
+                </a>
+            </div>
+            <p class="text-muted lead">{{ sketch.description or 'Описание отсутствует.' }}</p>
+
+            <div class="bg-light p-3 rounded mb-4">
+                <p class="mb-2"><strong>Цена:</strong> <span class="text-primary fs-4 fw-bold">{{ sketch.price }} ₽</span></p>
+                <p class="mb-1"><strong>Стиль:</strong> <span class="badge bg-secondary">{{ sketch.style }}</span></p>
+                <p class="mb-1"><strong>Цвет:</strong> <span class="badge bg-dark">{{ sketch.color_type }}</span></p>
+                <p class="mb-1"><strong>Размер:</strong> <span class="badge bg-info text-dark">{{ sketch.size }}</span></p>
+                <p class="mb-0"><strong>Статус модерации:</strong>
+                    {% if sketch.status == 'approved' %}
+                        <span class="text-success fw-bold">Одобрен</span>
+                    {% elif sketch.status == 'rejected' %}
+                        <span class="text-danger fw-bold">Отклонен</span>
+                    {% else %}
+                        <span class="text-warning fw-bold">На проверке</span>
+                    {% endif %}
+                </p>
+            </div>
+
+            {% if current_user.is_authenticated and current_user.is_client() %}
+                {% if sketch.status == 'approved' %}
+                    <a href="{{ url_for('new_appointment') }}?sketch={{ sketch.id }}" class="btn btn-success btn-lg w-100 py-3 shadow-sm">Записаться на сеанс с этим эскизом</a>
+                {% else %}
+                    <button class="btn btn-secondary btn-lg w-100" disabled>Запись временно недоступна (модерация)</button>
+                {% endif %}
+            {% elif not current_user.is_authenticated %}
+                <a href="{{ url_for('login') }}" class="btn btn-outline-primary w-100">Войдите, чтобы записаться</a>
+            {% endif %}
+        </div>
+    </div>
+
+    {% if recommendations %}
+    <hr class="mt-5">
+    <h4 class="mb-4 text-center text-md-start">Вам также может понравиться (Похожие эскизы)</h4>
+    <div class="row">
+        {% for rec in recommendations %}
+        <div class="col-6 col-md-3 mb-4">
+            <div class="card h-100 shadow-sm border-0 img-hover-effect">
+                <img src="{{ API_BASE_URL }}{{ rec.thumbnail_url or rec.image_url }}" class="card-img-top" style="height:160px; object-fit:cover" alt="{{ rec.title }}">
+                <div class="card-body p-2 d-flex flex-column justify-content-between">
+                    <a href="{{ url_for('sketch_detail', id=rec.id) }}" class="text-decoration-none text-dark fw-bold small text-truncate d-block mb-1">
+                        {{ rec.title }}
+                    </a>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-primary fw-bold small">{{ rec.price }} ₽</span>
+                        <span class="text-muted text-truncate style-tag" style="max-width: 60px; font-size: 10px;">{{ rec.style }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    .img-hover-effect { transition: transform 0.2s ease-in-out; }
+    .img-hover-effect:hover { transform: translateY(-4px); }
+</style>
+{% endblock %}

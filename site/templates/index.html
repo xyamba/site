@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    /* Кастомные стили для главной страницы */
+    .hero-text {
+        color: #e2e8f0 !important;
+        font-size: 1.15rem;
+        line-height: 1.7;
+        text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    }
+
+    /* Стили для карточек преимуществ */
+    .feature-box {
+        background: #1f2833;
+        border: 1px solid rgba(69, 243, 255, 0.1);
+        border-radius: 16px;
+        padding: 2.5rem 2rem;
+        height: 100%;
+        transition: all 0.3s ease-in-out;
+    }
+    .feature-box:hover {
+        transform: translateY(-5px);
+        border-color: #45f3ff;
+        box-shadow: 0 10px 30px rgba(69, 243, 255, 0.15);
+    }
+    .feature-icon {
+        font-size: 2.5rem;
+        margin-bottom: 1.5rem;
+        display: inline-block;
+    }
+    .feature-desc {
+        color: #c5c6c7 !important;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* Премиальная промо-карточка */
+    .promo-card {
+        background: linear-gradient(145deg, #1f2833, #0f141a);
+        border: 1px solid rgba(69, 243, 255, 0.2);
+        border-radius: 24px;
+        padding: 20px;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.6), 0 0 30px rgba(69, 243, 255, 0.05);
+    }
+    .promo-image {
+        width: 100%;
+        height: 280px;
+        object-fit: cover;
+        border-radius: 16px;
+        border: 1px solid rgba(255,255,255,0.05);
+    }
+</style>
+
+<div class="row align-items-center my-5 py-4 g-5">
+    <div class="col-lg-6">
+        <h1 class="display-4 fw-bold text-white mb-4" style="line-height: 1.2;">
+            Твой idealьный нательный рисунок в <span style="color: #45f3ff; text-shadow: 0 0 20px rgba(69, 243, 255, 0.3);">InkBook</span>
+        </h1>
+        <p class="hero-text mb-4">
+            Прогрессивная экосистема для ценителей тату-культуры. Ищи уникальные авторские эскизы, выбирай проверенных мастеров и бронируй сеансы в пару кликов.
+        </p>
+        <div class="d-flex flex-wrap gap-3 mt-4">
+            <a href="{{ url_for('catalog') }}" class="btn btn-neon-primary btn-lg px-4 py-3">
+                <i class="fa-solid fa-compass me-2"></i>Открыть каталог
+            </a>
+            {% if not current_user.is_authenticated %}
+            <a href="{{ url_for('register') }}" class="btn btn-neon-outline btn-lg px-4 py-3">
+                Стать частью системы
+            </a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="col-lg-6">
+        <div class="promo-card text-center position-relative">
+            <img src="https://images.unsplash.com/photo-1598371839696-5c5bb00bdc28?auto=format&fit=crop&w=800&q=80"
+                 class="promo-image mb-3"
+                 alt="InkBook Premium Art">
+            <div class="d-flex justify-content-between align-items-center px-2 mt-3">
+                <div class="text-start">
+                    <span class="badge bg-info text-dark mb-1 fw-bold">Тренды 2026</span>
+                    <h5 class="text-white mb-0 fw-bold">Премиальное качество</h5>
+                </div>
+                <div class="text-end">
+                    <span style="color: #45f3ff; font-weight: 700; font-size: 1.2rem;"><i class="fa-solid fa-bolt me-1"></i> Online</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mt-5 pt-4">
+    <div class="col-md-4">
+        <div class="feature-box text-center">
+            <div class="feature-icon" style="color: #45f3ff; text-shadow: 0 0 15px rgba(69, 243, 255, 0.4);">
+                <i class="fa-solid fa-wand-magic-sparkles"></i>
+            </div>
+            <h4 class="text-white fw-bold mb-3">Умные рекомендации</h4>
+            <p class="feature-desc mb-0">
+                Умный алгоритм автоматически подберет похожие эскизы на основе детального анализа стилей, авторов и выбранной вами цветовой гаммы.
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="feature-box text-center">
+            <div class="feature-icon" style="color: #00ffa3; text-shadow: 0 0 15px rgba(0, 255, 163, 0.4);">
+                <i class="fa-regular fa-calendar-check"></i>
+            </div>
+            <h4 class="text-white fw-bold mb-3">Мгновенная онлайн-запись</h4>
+            <p class="feature-desc mb-0">
+                Забудьте о долгих переписках в мессенджерах. Выбирайте свободное удобное окно прямо в интерактивном живом календаре выбранного мастера.
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="feature-box text-center">
+            <div class="feature-icon" style="color: #ffb703; text-shadow: 0 0 15px rgba(255, 183, 3, 0.4);">
+                <i class="fa-solid fa-compress"></i>
+            </div>
+            <h4 class="text-white fw-bold mb-3">Оптимизация изображений</h4>
+            <p class="feature-desc mb-0">
+                Система на лету автоматически сжимает и защищает изображения, сохраняя превосходную скорость загрузки страниц приложения даже на смартфонах.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %}

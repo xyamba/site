@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Запись к мастеру</h2>
+<form method="POST" id="bookingForm">
+    {{ form.hidden_tag() }}
+    <div class="mb-3">{{ form.master_id.label }} {{ form.master_id(class="form-select", id="masterSelect") }}</div>
+    <div class="mb-3">{{ form.slot_id.label }} {{ form.slot_id(class="form-select", id="slotSelect") }}</div>
+    <div class="mb-3">{{ form.sketch_id.label }} {{ form.sketch_id(class="form-select") }}</div>
+    <div class="mb-3">{{ form.comment.label }} {{ form.comment(class="form-control") }}</div>
+    {{ form.submit(class="btn btn-success") }}
+</form>
+<script>
+    document.getElementById('masterSelect').addEventListener('change', function() {
+        let masterId = this.value;
+        if (!masterId) return;
+        fetch('/get_slots/' + masterId)
+            .then(response => response.json())
+            .then(data => {
+                let slotSelect = document.getElementById('slotSelect');
+                slotSelect.innerHTML = '<option value="">Выберите время</option>';
+                data.forEach(slot => {
+                    let option = document.createElement('option');
+                    option.value = slot.id;
+                    option.textContent = slot.start + ' — ' + slot.end;
+                    slotSelect.appendChild(option);
+                });
+            });
+    });
+</script>
+{% endblock %}

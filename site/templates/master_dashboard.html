@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block content %}
+<style>
+    /* Уникальные стили для мега-панели мастера */
+    .stat-card {
+        background: var(--bg-card);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+        border-color: var(--primary-neon);
+        transform: translateY(-3px);
+    }
+    .sketch-card {
+        transition: all 0.3s ease-in-out;
+    }
+    .sketch-card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 10px 20px rgba(69, 243, 255, 0.15);
+    }
+    /* Высококачественная кастомная таблица (Защита от бага на Скриншоте 1) */
+    .table-premium {
+        width: 100%;
+        background-color: var(--bg-card) !important;
+        border-collapse: separate;
+        border-spacing: 0 8px;
+    }
+    .table-premium th {
+        background-color: rgba(255, 255, 255, 0.02) !important;
+        color: var(--text-light) !important;
+        padding: 16px !important;
+        font-weight: 600;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+        letter-spacing: 1px;
+        border-bottom: 2px solid var(--primary-neon) !important;
+    }
+    .table-premium tbody tr {
+        background-color: #171e27 !important;
+        transition: all 0.2s ease;
+    }
+    .table-premium tbody tr:hover {
+        background-color: #1e2733 !important;
+        box-shadow: 0 0 12px rgba(69, 243, 255, 0.1);
+    }
+    .table-premium td {
+        padding: 16px !important;
+        color: var(--text-main) !important;
+        border-top: 1px solid rgba(255, 255, 255, 0.03);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    }
+    .table-premium td:first-child {
+        border-left: 1px solid rgba(255, 255, 255, 0.03);
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+    }
+    .table-premium td:last-child {
+        border-right: 1px solid rgba(255, 255, 255, 0.03);
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+    }
+</style>
+
+<div class="container">
+
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center gap-3 mb-5 border-bottom border-secondary border-opacity-25 pb-4">
+        <div>
+            <h2 class="fw-bold text-white mb-1"><i class="fa-solid fa-user-ninja text-info me-3" style="color:var(--primary-neon) !important;"></i>Личный кабинет тату-мастера</h2>
+            <p class="text-muted mb-0">Управление вашей студией, расписанием сеансов и базой эскизов</p>
+        </div>
+        <a href="{{ url_for('upload_sketch') }}" class="btn btn-neon-primary px-4 py-2.5 fs-6">
+            <i class="fa-solid fa-cloud-arrow-up me-2"></i>Загрузить новый эскиз
+        </a>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-md-4">
+            <div class="stat-card p-4 d-flex align-items-center gap-3">
+                <div class="p-3 rounded-3 bg-opacity-10 bg-info"><i class="fa-solid fa-paint-brush text-info fs-3"></i></div>
+                <div>
+                    <h3 class="text-white mb-0 fw-bold">{{ sketches|length }}</h3>
+                    <small class="text-muted">Эскизов в портфолио</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card p-4 d-flex align-items-center gap-3">
+                <div class="p-3 rounded-3 bg-opacity-10 bg-warning"><i class="fa-solid fa-calendar-check text-warning fs-3"></i></div>
+                <div>
+                    <h3 class="text-white mb-0 fw-bold">{{ slots|length }}</h3>
+                    <small class="text-muted">Активных окон времени</small>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card p-4 d-flex align-items-center gap-3">
+                <div class="p-3 rounded-3 bg-opacity-10 bg-success"><i class="fa-solid fa-bell text-success fs-3"></i></div>
+                <div>
+                    <h3 class="text-white mb-0 fw-bold">{{ appointments|length }}</h3>
+                    <small class="text-muted">Всего заявок на запись</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h4 class="mb-4 text-white d-flex align-items-center"><i class="fa-solid fa-folder-open me-2 text-info"></i> Моё портфолио</h4>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-md-4 g-4 mb-5">
+        {% for s in sketches %}
+        <div class="col">
+            <div class="card h-100 bg-dark border-secondary border-opacity-50 sketch-card text-white">
+                <div class="position-relative">
+                    <img src="{{ API_BASE_URL }}{{ s.image_url }}" class="card-img-top" style="height:200px; object-fit:cover;" alt="Тату эскиз">
+                    <span class="position-absolute top-0 end-0 badge bg-dark bg-opacity-70 m-2 border border-info text-info">{{ s.price }} ₽</span>
+                </div>
+                <div class="card-body d-flex flex-column justify-content-between p-3">
+                    <h6 class="card-title fw-bold text-white text-truncate mb-3">{{ s.title }}</h6>
+                    <a href="{{ url_for('delete_sketch', id=s.id) }}" class="btn btn-sm btn-outline-danger w-100 py-2"><i class="fa-solid fa-trash-can me-1"></i> Удалить</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12">
+            <div class="p-4 rounded border border-dashed border-secondary text-center text-muted">
+                Портфолио пустует. Загрузите свои первые работы, нажав кнопку выше.
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="row g-4 mt-2">
+
+        <div class="col-lg-4">
+            <div class="p-4 rounded-3 h-100 shadow-sm" style="background-color: var(--bg-card);">
+                <div class="d-flex justify-content-between align-items-center mb-4 border-bottom border-secondary pb-2">
+                    <h4 class="text-white mb-0 fs-5"><i class="fa-solid fa-clock text-warning me-2"></i>Часы работы</h4>
+                    <a href="{{ url_for('add_slot') }}" class="btn btn-sm btn-neon-outline px-2.5">+ Добавить</a>
+                </div>
+
+                {% if slots %}
+                <div style="max-height: 350px; overflow-y: auto; padding-right: 4px;">
+                    <ul class="list-group p-0 bg-transparent">
+                        {% for slot in slots %}
+                        <li class="list-group-item bg-dark border-secondary text-white d-flex justify-content-between align-items-center mb-2 rounded shadow-sm py-2.5">
+                            <span class="small fw-medium"><i class="fa-regular fa-clock text-info me-2"></i>{{ slot.start_time }}</span>
+                            <a href="{{ url_for('delete_slot', slot_id=slot.id) }}" class="btn btn-sm text-danger border-0 p-1 shadow-none" title="Удалить слот">
+                                <i class="fa-solid fa-square-xmark fs-5"></i>
+                            </a>
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% else %}
+                <p class="text-muted small py-4 text-center">Свободные окна для онлайн-записи отсутствуют.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="p-4 rounded-3 h-100 shadow-sm" style="background-color: var(--bg-card);">
+                <h4 class="text-white mb-4 border-bottom border-secondary pb-2 fs-5"><i class="fa-solid fa-envelope text-success me-2"></i>Входящие заявки от клиентов</h4>
+
+                {% if appointments %}
+                <div class="table-responsive">
+                    <table class="table-premium">
+                        <thead>
+                            <tr>
+                                <th>Клиент</th>
+                                <th>Дата сеанса</th>
+                                <th>Эскиз</th>
+                                <th>Текущий статус</th>
+                                <th class="text-end">Решение</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        {% for a in appointments %}
+                        <tr>
+                            <td class="text-white fw-bold"><i class="fa-regular fa-user me-2 text-muted"></i>{{ a.client_name }}</td>
+                            <td class="text-info fw-medium">{{ a.booking_date }}</td>
+                            <td><span class="badge bg-secondary bg-opacity-25 text-white-50">#{{ a.sketch_id if a.sketch_id else 'Свой эскиз' }}</span></td>
+                            <td>
+                                {% if a.status == 'pending' %}
+                                    <span class="badge bg-warning text-dark py-1.5 px-2.5"><i class="fa-solid fa-spinner fa-spin me-1"></i> Ожидает</span>
+                                {% elif a.status == 'confirmed' %}
+                                    <span class="badge bg-success text-white py-1.5 px-2.5"><i class="fa-solid fa-circle-check me-1"></i> Одобрен</span>
+                                {% else %}
+                                    <span class="badge bg-danger text-white py-1.5 px-2.5"><i class="fa-solid fa-circle-xmark me-1"></i> Отклонён</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                {% if a.status == 'pending' %}
+                                <div class="btn-group gap-2">
+                                    <a href="{{ url_for('change_appointment_status', id=a.id, action='confirm') }}" class="btn btn-sm btn-success px-3 py-1 rounded">Принять</a>
+                                    <a href="{{ url_for('change_appointment_status', id=a.id, action='cancel') }}" class="btn btn-sm btn-danger px-3 py-1 rounded">Отказ</a>
+                                </div>
+                                {% else %}
+                                <span class="text-muted small italic"><i class="fa-solid fa-check-double me-1"></i> Закрыто</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <p class="text-muted py-4 text-center">Новых клиентских заявок пока не поступало.</p>
+                {% endif %}
+            </div>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

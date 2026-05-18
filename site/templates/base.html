@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}InkBook — Премиум агрегатор тату-эскизов{% endblock %}</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        :root {
+            --bg-dark: #0b0c10;
+            --bg-card: #1f2833;
+            --primary-neon: #45f3ff;
+            --secondary-neon: #00ffa3;
+            --text-main: #c5c6c7;
+            --text-light: #ffffff;
+            --danger-neon: #ff3366;
+        }
+
+        /* Кастомный премиальный скроллбар */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--bg-card);
+            border-radius: 4px;
+            border: 1px solid var(--primary-neon);
+        }
+
+        body {
+            background-color: var(--bg-dark) !important;
+            color: var(--text-main) !important;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, h4, h5, h6, label, .form-label {
+            color: var(--text-light) !important;
+            letter-spacing: 0.5px;
+        }
+
+        /* Стильная навигационная панель */
+        .navbar-custom {
+            background: var(--bg-card) !important;
+            border-bottom: 2px solid rgba(69, 243, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .navbar-brand-ink {
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--text-light) !important;
+            text-shadow: 0 0 10px rgba(69, 243, 255, 0.3);
+        }
+
+        .navbar-brand-ink span {
+            color: var(--primary-neon);
+            text-shadow: 0 0 12px var(--primary-neon);
+        }
+
+        .nav-link-custom {
+            color: var(--text-main) !important;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link-custom:hover, .nav-link-custom.active {
+            color: var(--primary-neon) !important;
+            transform: translateY(-1px);
+        }
+
+        /* Фирменные неоновые кнопки */
+        .btn-neon-primary {
+            background: var(--primary-neon) !important;
+            color: #000000 !important;
+            font-weight: 600;
+            border: none !important;
+            box-shadow: 0 0 15px rgba(69, 243, 255, 0.4);
+            transition: all 0.3s ease-in-out;
+        }
+
+        .btn-neon-primary:hover {
+            background: #23e2ef !important;
+            box-shadow: 0 0 25px rgba(69, 243, 255, 0.8);
+            transform: translateY(-2px);
+        }
+
+        .btn-neon-outline {
+            border: 1px solid var(--primary-neon) !important;
+            color: var(--primary-neon) !important;
+            background: transparent !important;
+            transition: all 0.3s ease;
+        }
+
+        .btn-neon-outline:hover {
+            background: rgba(69, 243, 255, 0.1) !important;
+            box-shadow: 0 0 15px rgba(69, 243, 255, 0.3);
+            color: var(--text-light) !important;
+        }
+
+        /* Полное исправление полей ввода WTForms */
+        .form-control, .form-select {
+            background-color: #151c24 !important;
+            border: 1px solid rgba(69, 243, 255, 0.3) !important;
+            color: var(--text-light) !important;
+            border-radius: 8px !important;
+            padding: 12px !important;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #1c2630 !important;
+            border-color: var(--primary-neon) !important;
+            color: var(--text-light) !important;
+            box-shadow: 0 0 15px rgba(69, 243, 255, 0.5) !important;
+        }
+
+        .form-control::placeholder {
+            color: #4f5d6c !important;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar navbar-expand-lg navbar-custom p-3 sticky-top">
+        <div class="container">
+            <a class="navbar-brand navbar-brand-ink" href="{{ url_for('index') }}">
+                <i class="fa-solid fa-pen-nib me-2 text-info"></i>Ink<span>Book</span>
+            </a>
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="mainNavbar">
+                <ul class="navbar-nav mx-auto gap-3">
+                    <li class="nav-item">
+                        <a href="{{ url_for('index') }}" class="nav-link nav-link-custom"><i class="fa-solid fa-house me-1"></i> Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="{{ url_for('catalog') }}" class="nav-link nav-link-custom"><i class="fa-solid fa-images me-1"></i> Каталог эскизов</a>
+                    </li>
+                </ul>
+                <div class="d-flex align-items-center gap-3">
+                    {% if current_user.is_authenticated %}
+                        {% if current_user.is_master() %}
+                            <a href="{{ url_for('master_dashboard') }}" class="btn btn-sm btn-neon-outline px-3 py-2"><i class="fa-solid fa-chart-line me-1"></i> Панель мастера</a>
+                        {% else %}
+                            <a href="{{ url_for('client_dashboard') }}" class="btn btn-sm btn-neon-outline px-3 py-2"><i class="fa-solid fa-user me-1"></i> Кабинет</a>
+                        {% endif %}
+                        <a href="{{ url_for('logout') }}" class="btn btn-sm btn-danger px-3 py-2" title="Выйти"><i class="fa-solid fa-arrow-right-from-bracket"></i></a>
+                    {% else %}
+                        <a href="{{ url_for('login') }}" class="nav-link nav-link-custom me-2">Вход</a>
+                        <a href="{{ url_for('register') }}" class="btn btn-sm btn-neon-primary px-3 py-2">Регистрация</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container my-5 flex-grow-1">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-dark border-0 text-white shadow p-3 mb-4 d-flex align-items-center" style="background: var(--bg-card); border-left: 4px solid var(--primary-neon) !important;" role="alert">
+                        <i class="fa-solid fa-circle-info text-info me-3 fs-5"></i>
+                        <div>{{ message }}</div>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="text-center py-4 border-top mt-auto" style="background: #12161c; border-color: rgba(255,255,255,0.05) !important;">
+        <p class="text-muted small mb-0">&copy; 2026 InkBook. Разработка кроссплатформенной системы. Группа 401ИС-22.</p>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

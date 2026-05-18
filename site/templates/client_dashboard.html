@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Мои записи</h2>
+<table class="table">
+    <tr><th>Мастер</th><th>Дата</th><th>Эскиз</th><th>Статус</th><th></th></tr>
+    {% for a in appointments %}
+    <tr>
+        <td>{{ a.master_name }}</td>
+        <td>{{ a.booking_date }}</td>
+        <td>{{ a.sketch_id }}</td>
+        <td>{{ a.status }}</td>
+        <td>
+            {% if a.status == 'pending' %}
+            <a href="{{ url_for('cancel_appointment', id=a.id) }}" class="btn btn-sm btn-warning">Отменить</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row justify-content-center my-4">
+    <div class="col-xl-6 col-lg-8">
+        <div class="p-5 rounded-4 shadow-lg" style="background: var(--bg-card); border: 1px solid rgba(69, 243, 255, 0.1);">
+            <div class="text-center mb-4">
+                <div class="d-inline-block p-3 rounded-circle mb-3" style="background: rgba(69, 243, 255, 0.05);">
+                    <i class="fa-solid fa-calendar-plus text-info fs-1" style="color: var(--primary-neon) !important;"></i>
+                </div>
+                <h2 class="text-white fw-bold">Добавить рабочий слот</h2>
+                <p class="text-muted small">Укажите временной интервал для записи клиентов на сеанс</p>
+            </div>
+
+            <form method="POST" autocomplete="off">
+                {{ form.hidden_tag() }}
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold mb-2"><i class="fa-solid fa-hourglass-start me-2 text-info"></i>{{ form.start_time.label.text }}</label>
+                    {{ form.start_time(class="form-control form-control-lg", placeholder="ГГГГ-ММ-ДД ЧЧ:ММ") }}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-bold mb-2"><i class="fa-solid fa-hourglass-end me-2 text-warning"></i>{{ form.end_time.label.text }}</label>
+                    {{ form.end_time(class="form-control form-control-lg", placeholder="ГГГГ-ММ-ДД ЧЧ:ММ") }}
+                </div>
+
+                <div class="d-flex gap-3 mt-5">
+                    <button type="submit" class="btn btn-neon-primary btn-lg flex-grow-1 py-3">
+                        <i class="fa-solid fa-floppy-disk me-2"></i>Сохранить слот
+                    </button>
+                    <a href="{{ url_for('master_dashboard') }}" class="btn btn-outline-secondary text-white btn-lg px-4 py-3">
+                        Отмена
+                    </a>
+                </div>
+            </form>
+
+            <div class="mt-4 p-3 rounded-3 bg-dark text-center border border-secondary border-opacity-25">
+                <small class="text-muted">Шаблон заполнения: <strong class="text-white">2026-05-20 14:00</strong></small>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

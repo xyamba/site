@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-4 align-items-center">
+    <div class="col-md-6">
+        <h2 class="text-white fw-bold"><i class="fa-solid fa-images text-info me-2"></i>Каталог InkBook</h2>
+        <p class="text-muted mb-0">Исследуйте лучшие работы мастеров</p>
+    </div>
+    <div class="col-md-6 text-md-end mt-3 mt-md-0">
+        <div class="btn-group shadow-sm">
+            <a href="?sort=date_desc" class="btn btn-sm btn-dark border border-secondary {% if sort == 'date_desc' %}active text-info{% endif %}">Новинки</a>
+            <a href="?sort=price_asc" class="btn btn-sm btn-dark border border-secondary {% if sort == 'price_asc' %}active text-info{% endif %}">Сначала дешевле</a>
+            <a href="?sort=price_desc" class="btn btn-sm btn-dark border border-secondary {% if sort == 'price_desc' %}active text-info{% endif %}">Сначала дороже</a>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-lg-3 mb-4">
+        <div class="p-4 rounded-4 shadow-sm border" style="background: var(--bg-card); border-color: rgba(255,255,255,0.05) !important;">
+            <h5 class="text-white mb-4 fw-bold"><i class="fa-solid fa-sliders text-info me-2"></i>Фильтры</h5>
+            <form method="GET" action="{{ url_for('catalog') }}">
+                <div class="mb-3">
+                    <label class="text-muted small fw-medium mb-1">Поиск</label>
+                    {{ form.search(class="form-control bg-dark border-secondary text-white", placeholder="Дракон, череп...") }}
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small fw-medium mb-1">Стиль исполнения</label>
+                    {{ form.style(class="form-select bg-dark border-secondary text-white") }}
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small fw-medium mb-1">Цветовое решение</label>
+                    {{ form.color_type(class="form-select bg-dark border-secondary text-white") }}
+                </div>
+                <div class="mb-3">
+                    <label class="text-muted small fw-medium mb-1">Размер</label>
+                    {{ form.size(class="form-select bg-dark border-secondary text-white") }}
+                </div>
+                <div class="row g-2 mb-4">
+                    <div class="col-6">
+                        <label class="text-muted small fw-medium mb-1">Цена от</label>
+                        {{ form.min_price(class="form-control bg-dark border-secondary text-white", placeholder="0") }}
+                    </div>
+                    <div class="col-6">
+                        <label class="text-muted small fw-medium mb-1">до</label>
+                        {{ form.max_price(class="form-control bg-dark border-secondary text-white", placeholder="99к") }}
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-gradient-neon w-100 py-2"><i class="fa-solid fa-check me-2"></i>Применить</button>
+                <a href="{{ url_for('catalog') }}" class="btn btn-sm btn-link text-muted w-100 text-center mt-2 text-decoration-none">Сбросить всё</a>
+            </form>
+        </div>
+    </div>
+
+    <div class="col-lg-9">
+        {% if sketches %}
+            <div class="row g-4">
+                {% for s in sketches %}
+                <div class="col-md-6 col-xl-4">
+                    <div class="card sketch-card h-100">
+                        <div class="sketch-img-container">
+                            <img src="{{ API_BASE_URL }}{{ s.image_url }}" alt="{{ s.title }}">
+                            <span class="sketch-badge">{{ s.price }} ₽</span>
+                        </div>
+                        <div class="card-body p-4 d-flex flex-column">
+                            <h5 class="card-title text-white fw-bold mb-1">{{ s.title }}</h5>
+                            <p class="text-info small mb-3">#{{ s.style }} &bull; {{ s.size }}</p>
+                            <p class="card-text text-muted small flex-grow-1">
+                                {{ s.description|truncate(80) if s.description else 'Авторский эскиз от сертифицированного мастера.' }}
+                            </p>
+                            <div class="pt-3 border-top border-secondary d-flex align-items-center justify-content-between">
+                                <span class="small text-muted"><i class="fa-solid fa-user-ninja me-1 text-secondary"></i> Мастер ID: {{ s.master_id }}</span>
+                                <a href="{{ url_for('sketch_detail', id=s.id) }}" class="btn btn-sm btn-outline-custom py-1 px-3">Подробнее</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            {% if pagination %}
+            <nav class="mt-5">
+                <ul class="pagination justify-content-center gap-2">
+                    <li class="page-item {% if not pagination.has_prev %}disabled{% endif %}">
+                        <a class="page-link bg-dark border-secondary text-white rounded-3" href="?page={{ pagination.prev_num }}&sort={{ sort }}"><i class="fa-solid fa-angle-left"></i></a>
+                    </li>
+                    <li class="page-item active">
+                        <span class="page-link bg-info border-info text-dark rounded-3 fw-bold">{{ pagination.page }}</span>
+                    </li>
+                    <li class="page-item {% if not pagination.has_next %}disabled{% endif %}">
+                        <a class="page-link bg-dark border-secondary text-white rounded-3" href="?page={{ pagination.next_num }}&sort={{ sort }}"><i class="fa-solid fa-angle-right"></i></a>
+                    </li>
+                </ul>
+            </nav>
+            {% endif %}
+        {% else %}
+            <div class="text-center py-5 rounded-4" style="background: var(--bg-card);">
+                <i class="fa-solid fa-folder-open fa-3x text-muted mb-3"></i>
+                <h4 class="text-white">Эскизы не найдены</h4>
+                <p class="text-muted">Попробуйте изменить параметры фильтрации или поисковый запрос.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
